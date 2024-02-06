@@ -1,0 +1,3 @@
+Start Test With Automatic Fixture
+Test 2 Is Complete
+Log Out

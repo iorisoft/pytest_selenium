@@ -1,0 +1,448 @@
+Creation of virtual enviroment for everything  python project
+esto es para empezar con un projecto limpio y sin instalaciones
+
+notese que deberemos de tener la ruta y poner el despues de
+la ruta \env
+python -m venv C:\Users\M1LESPINOS\PycharmProjects\pytest\venv
+
+What is Pytest?
+* Testing Framework for Python
+* Auto-discovery of test
+* Rich assertion intrsopection
+* Support parameterized and fixture-based testing
+
+install pytest on pycharm
+pip install pytest
+
+Python
+Pip (Usually, Gets installed with python)
+Pytest framework with a few test cases
+pip install allure-pytest
+se debe de editar la configuracion para que podamos ejecutar pytest
+
+NOTA cada caso de prueba forzosamente tiene que iniciar con test
+
+pytest files should have the format test_*.py or *_test.py
+and test methods/functions should start with keyword "test"
+
+
+
+
+para ejecutar el script desde terminal deberiamos de realizar lo siguiente
+
+pytest -v -s
+
+para ejecutar un varios archivos de pruebas .py deben de estar dentro de una carpeta y empezar con 
+test_moduloaqui.py
+
+para que dentro de la carpeta nos reconozca todos los test.py  y ahi podarmos ejecutarlos todos a la vez con el siguiente
+comando
+para saber mas de este tipo de propiedades consultar  pytest --help
+-v es para modo verboso  mas detalles en el test case
+-s Muestra los print que se le han añadido en cada TESTCASE
+-k keywords
+
+PARA AGRUPAR TESTCASES SE REALIZA LO SIGUIENTE
+@pytest.mark.nombre_del_modulo  (Sanity,Smoke,Regresion)
+PARA EJECUTAR TESTCASES AGRUPADOS ES DE LA SIGUIENTE FORMA 
+pytest -vm sanity (nombre del modulo agrupado)
+  -m MARKEXPR           Only run tests matching given mark expression. For example: -m 'mark1 and not mark2'.
+por ejemplo si tenemos 2 casos de pruebas en pytest  seria lo siguiente
+@pytest.mark.sanity
+def test_busqueda_appium():
+
+@pytest.mark.sanity
+def test_busqueda_pc_gamer():
+
+#COMO LOS 2 TIENEN LA AGRUPACION DE "SANITY" PARA SU EJECUCION SERIA LO SIGUIENTE
+pytest -vm sanity
+
+PARA OMITIR ALGUN TESTCASE SE PONER LA SIGUIENTE ANOTACION
+@pytest.mark.skip
+def test_simplecalculation():
+    assert 2+2 == 7
+
+La marca xfail es cuando
+mark the test function as an expected failure if any
+of the conditions evaluate to True.
+se espera que este test case falle por que aun esta en desarrollo
+o se esta trabajando
+un ejemplo cuando se ejecutan los test cases
+
+LearnPyTest/test_additems.py::testLogin PASSED                                                                                                                                                                               [  7%]
+LearnPyTest/test_additems.py::testLogoff PASSED                                                                                                                                                                              [ 15%]
+LearnPyTest/test_additems.py::testCalculation PASSED                                                                                                                                                                         [ 23%]
+LearnPyTest/test_checkout.py::testLogin PASSED                                                                                                                                                                               [ 30%]
+LearnPyTest/test_checkout.py::testLogoff PASSED                                                                                                                                                                              [ 38%]
+LearnPyTest/test_checkout.py::testCalculation PASSED                                                                                                                                                                         [ 46%]
+LearnPyTest/test_login.py::testLogin SKIPPED (unconditional skip)                                                                                                                                                            [ 53%]
+LearnPyTest/test_login.py::testLogoff PASSED                                                                                                                                                                                 [ 61%]
+LearnPyTest/test_login.py::testCalculation PASSED                                                                                                                                                                            [ 69%]
+LearnPyTest/test_login.py::testCalculation1 XFAIL                                                                                                                                                                            [ 76%]
+LearnPyTest/test_logoff.py::testLogin PASSED                                                                                                                                                                                 [ 84%]
+LearnPyTest/test_logoff.py::testLogoff PASSED                                                                                                                                                                                [ 92%]
+LearnPyTest/test_logoff.py::testCalculation PASSED                                                                                                                                                                           [100%]
+
+
+
+REPORTES CON ALLURE REPORT 
+instalar el paquete para pytest
+pip3 install allure-pytest
+este comando nos genera los archivos de json de la ejecucion
+pytest --alluredir=<path to report directory> test.py
+para generar el reporte ya en su version HTML es de la siguiente manera 
+LA RUTA DEBE SER LA MISMA DONDE SE GENERARON LOS ARCHIVOS DE JSON 
+allure serve <path to report directory>
+
+
+SI DESEAMOS CREAR RUTINAS DE PASOS DE LA SIGUIENTE MANERA CON LA ANOTACION FIXTURE
+NOTESE QUE EL METODO SETUP ESTA DENTRO DE EL TEST AÑADIR PRODUCTO COMO PARAMETRO 
+@pytest.fixture()
+def setup():
+    print("Laun Browser")
+    print("Login")
+    print("Browser products")
+
+
+def test_anadir_producto(setup):
+
+    print("se añadio el producto exitosamente")
+
+CUANDO EJECUTEMOS  OBTENDREMOS LO SIGUIENTE 
+Laun Browser
+Login
+Browser products
+se añadio el producto exitosamente
+
+EL ARCHIVO DE CONFTEST SIRVE PARA IMPORTAR METDOOS O FUNCIONES COMUNMENTE UTILIZADAS 
+SE CREA EL ARCHIVO CONFTEST Y AHI AÑADIMOS DICHOS METODOS PARA UTILIZARLOS DE MANERA MAS CLARA EN PROXIMOS TESTCASES
+
+comando YIELD INVESTIGAR
+
+PODEMOS UTILIZAR EL PARAMETRO AUTOUSE  PARA NO TENER QUE ESTAR DECLARANDO EN CADA TESTCASE EL PARAMETRO 
+SI NO QUE AUTOMATICAMENTE LO TOME 
+
+@pytest.fixture(autouse=True)
+
+
+#################CHECAR MAS ACERCA DE EL PARAMETRO FIXTURE SCOPE = SESSION, FUNCTION,MODULE,PACKAGE,CLASS####################
+the fixtures scope are created when first requested by a test, and are destroyed based on their scope
+@pytest.fixture(scope="session",autouse=True)
+cuando se ejecuta las pruebas  y el scope esta en session
+solamente se ejecutara 1 setup y 1 teardown
+en el intermedio se ejecutaran todas las pruebas  para ser mas agil
+el proceso de la ejecucion.
+EJEMPLO
+
+(venv) PS C:\Users\M1LESPINOS\PycharmProjects\pytest> pytest -vs .\LearnPyTest\test_cart.py
+======================================================================================================= test session starts =======================================================================================================
+platform win32 -- Python 3.11.3, pytest-7.4.4, pluggy-1.3.0 -- C:\Users\M1LESPINOS\PycharmProjects\pytest\venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\M1LESPINOS\PycharmProjects\pytest
+collected 2 items
+
+LearnPyTest/test_cart.py::testAddItemtoCart Launch Browser
+login
+Browse Products
+Add Item Successful
+PASSED
+LearnPyTest/test_cart.py::testRemoveItemFromCart Remove Item Successful
+PASSEDLogoff
+Close Browser
+
+
+si se utiliza el scope function lanzara cada setup para cada prueba
+@pytest.fixture(scope="function",autouse=True)
+platform win32 -- Python 3.11.3, pytest-7.4.4, pluggy-1.3.0 -- C:\Users\M1LESPINOS\PycharmProjects\pytest\venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\M1LESPINOS\PycharmProjects\pytest
+collected 2 items
+
+LearnPyTest/test_cart.py::testAddItemtoCart Launch Browser
+login
+Browse Products
+Add Item Successful
+PASSEDLogoff
+Close Browser
+
+LearnPyTest/test_cart.py::testRemoveItemFromCart Launch Browser
+login
+Browse Products
+Remove Item Successful
+PASSEDLogoff
+Close Browser
+
+
+PARAMETRIZACION CON PYTEST
+
+
+
+PRESENTAR UN REPORTE HTML CON PYTEST
+pytest test --html=AutomationPageObjectReport.html
+
+
+
+******************* PYTEST LAMBDATEST ***************
+ASSERTIONS
+Hard Assert & Soft Asserts
+Hard Assert - stops execution after a failure and moves to the next annotation
+
+Soft Assert - continues execution after a faiulure and moves to the next statement line
+pip install softest
+supports the soft assert style of testing 
+where multiple assertions can fail within the same method
+while collectiong and formatting those failures stack traces
+for reporting by  a final assert_all call
+
+How To Run Multiple Tests In pytest 
+
+pytest Demopytest pytest_lambdatest -rA -v
+
+select a specific test by substring 
+.venv) PS C:\Users\M1LESPINOS\PycharmProjects\pytest_with_selenium> pytest -v -rA -k "add"
+======================================================================================================= test session starts =======================================================================================================
+platform win32 -- Python 3.11.3, pytest-7.4.4, pluggy-1.3.0 -- C:\Users\M1LESPINOS\PycharmProjects\pytest_with_selenium\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\M1LESPINOS\PycharmProjects\pytest_with_selenium
+collected 8 items / 7 deselected / 1 selected
+
+we can selecte a specific test and package
+pytest DemoPytest/test_multiple_subset_iphone.py -rA -v -k LAMBDATEST <-|
+
+ANOTHER FORM
+pytest DemoPytest/test_multiple_subset_iphone.py::test_search_lambdatest_ecomerce
+
+how to group test using markers
+@pytest.mark.smoke
+pytest -m "smoke" -rA -v --disable-warnings
+
+we can create a pytest.ini file  when were write a personalize markers for example 
+[pytest]
+markers =
+    smoke:        Smoke Test
+    regression:   Regression Test
+    sanity:       Sanity Test
+    integration:  Integration Test
+#ADD this parameters at moment to execute
+addopts = -rA -v
+
+for execute two marks in the same time  we need to put 
+pytest -m "smoke and integration"
+pytest -m "smoke and not integration"
+
+
+
+we can create a specific pytestmark
+pytestmark = [pytest.mark.regression, pytest.mark.sanity]
+#pytestmark = pytest.mark.regression
+
+
+
+******* Pytest Fixture ******
+import pytest
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+
+driver = webdriver.Chrome()
+
+@pytest.fixture(autouse=True)
+def start_automatic_fixture():
+    print("Start Test With Automatic Fixture")
+
+@pytest.fixture(scope="function")
+def Setup_Teardown():
+    driver.get("https://ecommerce-playground.lambdatest.io/index.php?route=account/login")
+    driver.maximize_window()
+    driver.find_element(By.XPATH,
+                        "//input[@placeholder='E-Mail Address']") \
+                            .send_keys("plexmediaserver1523@gmail.com")
+    driver.find_element(By.XPATH,
+                        "//input[@placeholder='Password']") \
+        .send_keys("Admin123")
+    driver.find_element(By.XPATH,
+                        "//input[@value='Login']").click()
+    print("Log In")
+    yield
+    driver.find_element(By.PARTIAL_LINK_TEXT,
+                        "Logout").click()
+    print("Log Out")
+
+@pytest.mark.usefixtures("Setup_Teardown")
+def test1_order_history_title():
+    driver.find_element(By.PARTIAL_LINK_TEXT,
+                        "Order").click()
+    assert driver.title == "Order History"
+    print("Test 1 Is Complete")
+
+@pytest.mark.usefixtures("Setup_Teardown")
+def test2_change_password_title():
+    driver.find_element(By.PARTIAL_LINK_TEXT,
+                        "Password").click()
+    assert driver.title == "Change Password"
+    print("Test 2 Is Complete")
+
+
+fixture nos ayuda a crear un rutina podemos crear el setup y teardown
+de inicio y cerrado y  en el medio existe el yield  que ahi podremos ingresar
+nuestro codigo  que prodemos reutilizar para varios test cases 
+
+			setup_teardown()
+			================
+			   setup code
+			================
+			      yield
+			================
+			  teardown code
+			================
+
+================  	================ 	================
+ test case 1	    	  test case 2     	  test case 3	
+================  	================ 	================
+
+dependiendo del scope que se tenga definido seria la manera de ejecucion por ejemplo
+@pytest.fixture(scope="function")
+si ejecuto con este scope el resultado sera 
+se ejecuta todo el proceso para cada test case
+============================================================================================================= PASSES ============================================================================================================== 
+____________________________________________________________________________________________________ test1_order_history_title ____________________________________________________________________________________________________ 
+------------------------------------------------------------------------------------------------------ Captured stdout setup ------------------------------------------------------------------------------------------------------ 
+Start Test With Automatic Fixture
+Log In
+------------------------------------------------------------------------------------------------------ Captured stdout call ------------------------------------------------------------------------------------------------------- 
+Test 1 Is Complete
+---------------------------------------------------------------------------------------------------- Captured stdout teardown ----------------------------------------------------------------------------------------------------- 
+Log Out
+___________________________________________________________________________________________________ test2_change_password_title ___________________________________________________________________________________________________ 
+------------------------------------------------------------------------------------------------------ Captured stdout setup ------------------------------------------------------------------------------------------------------ 
+Start Test With Automatic Fixture
+Log In
+------------------------------------------------------------------------------------------------------ Captured stdout call ------------------------------------------------------------------------------------------------------- 
+Test 2 Is Complete
+---------------------------------------------------------------------------------------------------- Captured stdout teardown ----------------------------------------------------------------------------------------------------- 
+Log Out
+===================================================================================================== short test summary info ===================================================================================================== 
+PASSED DEMOPytest/test_fixtures_2.py::test1_order_history_title
+PASSED DEMOPytest/test_fixtures_2.py::test2_change_password_title
+======================================================================================================== 2 passed in 7.20s ========================================================================================================
+pero si lo realizo con el scope module se ejecuta  un inicio
+todos los testcase en el intermedio  y un cierre para todos los test cases
+============================================================================================================= PASSES ============================================================================================================== 
+____________________________________________________________________________________________________ test1_order_history_title ____________________________________________________________________________________________________ 
+------------------------------------------------------------------------------------------------------ Captured stdout setup ------------------------------------------------------------------------------------------------------ 
+Log In
+Start Test With Automatic Fixture
+------------------------------------------------------------------------------------------------------ Captured stdout call ------------------------------------------------------------------------------------------------------- 
+Test 1 Is Complete
+___________________________________________________________________________________________________ test2_change_password_title ___________________________________________________________________________________________________ 
+------------------------------------------------------------------------------------------------------ Captured stdout setup ------------------------------------------------------------------------------------------------------ 
+Start Test With Automatic Fixture
+------------------------------------------------------------------------------------------------------ Captured stdout call ------------------------------------------------------------------------------------------------------- 
+Test 2 Is Complete
+---------------------------------------------------------------------------------------------------- Captured stdout teardown ----------------------------------------------------------------------------------------------------- 
+Log Out
+===================================================================================================== short test summary info ===================================================================================================== 
+PASSED DEMOPytest/test_fixtures_2.py::test1_order_history_title
+PASSED DEMOPytest/test_fixtures_2.py::test2_change_password_title
+======================================================================================================== 2 passed in 5.63s ======================================================================================================== 
+el scope module es mas rapido ya que no tiene que invocar de nuevo al setup ni teardown
+
+
+
+************* PARAMETERIZATION IN PYTEST ****************************
+
+
+ahi diversas opciones de parametrizacion 
+pero esta es para crear un archivo llamado conftest el cual nos ayuda
+a ejecutar todas las pruebas con los diferentes navegadores
+*******************conftest.py **********************
+import pytest
+from selenium import webdriver
+
+
+@pytest.fixture(params=["chrome", "firefox", "edge"])
+def initialize_driver(request):
+    if request.param == "chrome":
+        driver = webdriver.Chrome()
+    elif request.param == "firefox":
+        driver = webdriver.Firefox()
+    elif request.param == "edge":
+        driver = webdriver.Edge()
+    elif request.param == "edge":
+        driver = webdriver.Edge()
+    request.cls.driver = driver
+    print("Browser: ", request.param)
+    yield
+    print("Close Driver")
+    driver.close()
+*************fin conftest.py **********************
+
+
+
+---SKIPPING & STOPPING A TEST ---
+SKIPPING TEST
+si tenemos algun  test que debemos omitir por que aun estamos 
+trabajandolo  solo con poner este comando se vera omitido
+ESTE COMANDO SI EJECUTARA LA PRUEBA Y SE OMITIRA CUANDO RECONOZCA EL COMANDO
+ pytest.skip()
+
+===================================================================================================== short test summary info ===================================================================================================== 
+SKIPPED [1] test_skip.py:9: Skipped
+======================================================================================================= 1 skipped in 2.33s ========================================================================================================
+
+
+cuando utilizamos la anotacion se debera dar la razon por la cual
+dicho testcase sera omitido ejemplo
+@pytest.mark.skip(reason="Code Has Not Been Deployed")
+===================================================================================================== short test summary info ===================================================================================================== 
+SKIPPED [1] test_skip.py:13: Code Has Not Been Deployed
+======================================================================================================= 1 skipped in 0.01s ======================================================================================================== 
+
+si no se pone la razon por la cual sera omitido entonces 
+cuando se ejecute arrojara esto 
+@pytest.mark.skip()
+SKIPPED [1] test_skip.py:20: unconditional skip
+
+con esta anotacion se podria omitir si existe alguna condicion en especifico
+@pytest.mark.skipif(
+        datetime.now() >= datetime(2023, 12, 31),
+        reason="Repo Is Not Complete Until After Finishing Tutorial")
+
+************** REPORTEST CON PYTEST ********************
+necesitaremos intalar el paquete 
+pip install pytest-html
+
+como ejecutar el reporte html
+pytest test --html=AutomationPageObjectReport.html
+
+podremos agregar al archivo pytest.ini 
+#ADD this parameters at moment to execute
+addopts = -rA -v --html =MiReportePersonalizado.html
+
+
+***** crear un reporte con allure ---
+pip install allure-pytest
+
+con este comando realizara una ejecucion y creara un directorio
+con todos los archivos .json para su porterior creacion 
+del reporte 
+pytest --alluredir=AllureReport
+
+
+***descargaremos  allure-commandline***
+https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/
+
+
+lo pondremos en la unidad C: y deberemos de agregar a las variables
+de entorno 
+C:\allure-2.26.0\bin
+
+para la generacion del reporte  se ingresa el siguiente comando 
+allure serve .\AllureReport
+
+Allure report es nuestro directorio
+
+
+
+
+
+
